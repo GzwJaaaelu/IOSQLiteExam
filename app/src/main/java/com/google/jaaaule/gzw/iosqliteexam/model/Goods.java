@@ -1,10 +1,18 @@
 package com.google.jaaaule.gzw.iosqliteexam.model;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.Unique;
+
 /**
  * Created by admin on 2017/5/14.
  */
 
+@Entity(nameInDb = "goods")
 public class Goods {
+    @Unique
+    @NotNull
     private String id;              //  商品 Id
     private String introduction;    //  商品介绍
     private float price;            //  商品价格
@@ -12,7 +20,9 @@ public class Goods {
     private int remainingQuantity;  //  商品剩余数量
     private String addToCartTime;   //  商品加入到购物车的时间
 
-    public Goods(String id, String introduction, float price, String avatarUrl, int remainingQuantity, String addToCartTime) {
+    @Generated(hash = 2124002439)
+    public Goods(@NotNull String id, String introduction, float price, String avatarUrl, int remainingQuantity,
+            String addToCartTime) {
         this.id = id;
         this.introduction = introduction;
         this.price = price;
@@ -21,6 +31,7 @@ public class Goods {
         this.addToCartTime = addToCartTime;
     }
 
+    @Generated(hash = 1770709345)
     public Goods() {
     }
 

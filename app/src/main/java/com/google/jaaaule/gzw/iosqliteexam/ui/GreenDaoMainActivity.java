@@ -1,6 +1,5 @@
 package com.google.jaaaule.gzw.iosqliteexam.ui;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,21 +14,22 @@ import android.widget.Toast;
 
 import com.google.jaaaule.gzw.iosqliteexam.R;
 import com.google.jaaaule.gzw.iosqliteexam.adapter.GoodsAdapter;
-import com.google.jaaaule.gzw.iosqliteexam.db.GoodsOpenHelper;
 import com.google.jaaaule.gzw.iosqliteexam.model.Goods;
+import com.google.jaaaule.gzw.iosqliteexam.orm.OrmHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.google.jaaaule.gzw.iosqliteexam.R.id.fab;
 
-public class MainActivity extends AppCompatActivity {
+public class GreenDaoMainActivity extends AppCompatActivity {
     private RecyclerView mShowGoodsView;
     private FloatingActionButton mFab;
     private GoodsAdapter mAdapter;
     private List<Goods> mGoodsList;
-    private GoodsOpenHelper mOpenHelper;
-    private SQLiteDatabase mDatabase;
+    private OrmHelper mOrmHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         mGoodsList = new ArrayList<>();
-        mOpenHelper = new GoodsOpenHelper(this);
-        mDatabase = mOpenHelper.getWritableDatabase();
+        mOrmHelper = OrmHelper.newInstance(this);
     }
 
     /**
@@ -68,16 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 "知名大师打造的限量版吉他，本店特许销售，来体验吧...",
                 2333f, R.drawable.ic_guitar + "", 5, "2017-05-19 18:18:18");
         mGoodsList.add(guitar);
-        Goods iceCream = new Goods(R.drawable.ic_ice_cream + "",
-                "滨江特色冰淇淋，来自滨江的味道，你值得拥有...",
-                4.5f, R.drawable.ic_ice_cream + "", 99, "2017-05-19 23:23:23");
-        mGoodsList.add(iceCream);
         Goods typeWriter = new Goods(R.drawable.ic_typewriter + "",
                 "老子他妈的编不下去了，破打字机随便买...",
                 233f, R.drawable.ic_typewriter + "", 66, "2017-05-19 07:07:07");
         mGoodsList.add(typeWriter);
 
-        mOpenHelper.insertMoreGoods(mGoodsList);
+        mOrmHelper.insertGoodsList(mGoodsList);
     }
 
     private void initView() {
@@ -96,8 +91,14 @@ public class MainActivity extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "冰淇淋强势插入...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Goods iceCream = new Goods(R.drawable.ic_ice_cream + "",
+                        "滨江特色冰淇淋，来自滨江的味道，你值得拥有...",
+                        4.5f, R.drawable.ic_ice_cream + "", 99, format.format(new Date()));
+                mOrmHelper.insertGoods(iceCream);
+                queryGoods();
             }
         });
     }
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
      * 查询数据库中的货物
      */
     private void queryGoods() {
-        mGoodsList = mOpenHelper.queryAndOrderByDECSTime();
+        mGoodsList = mOrmHelper.queryGoods(0 ,10);
         if (mGoodsList != null) {
             mAdapter.setGoodsList(mGoodsList);
         }

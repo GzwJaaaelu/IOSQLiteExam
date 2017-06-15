@@ -79,6 +79,21 @@ public class GoodsOpenHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * 开启事务循环插入
+     */
+    public void insertGoods(com.google.jaaaule.gzw.iosqliteexam.model.Goods goods) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Goods.GOODS_ID, goods.getId());
+        values.put(Goods.GOODS_INTRODUCTION, goods.getIntroduction());
+        values.put(Goods.GOODS_PRICE, goods.getPrice());
+        values.put(Goods.GOODS_AVATAR_URL, goods.getAvatarUrl());
+        values.put(Goods.GOODS_REMAINING_QUANTITY, goods.getRemainingQuantity());
+        values.put(Goods.GOODS_ADD_TO_CART_TIME, goods.getAddToCartTime());
+        db.insertWithOnConflict(Goods.GOODS_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    /**
      * 查询货物
      * @return
      */
